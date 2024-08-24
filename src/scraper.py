@@ -1,6 +1,7 @@
 import os
 import ssl
 import PyPDF2
+import traceback
 import urllib.request
 import pypdfium2 as pdfium
 
@@ -26,22 +27,45 @@ def collect_links(url):
     return hrefs
 
 def download_pdf(links):
-
-    #TODO: IN PRODUCTION CODE, YOU SHOULD USE A FOR LOOP TO DOWNLOAD ALL PDFs REMOVE [:1]
     try:
-        for link in links[:10]:
+        for link in links[:1]: # get the first link which is latest pdf
             link_splitted = link.split("/")
             pdf_name = link_splitted[6].split("?")[0]
-            file_name = f"{link_splitted[4]}-{link_splitted[5]}-{pdf_name}"
-            save_path = os.path.join(file_path, file_name)
 
-            with urllib.request.urlopen(link, context=context) as response:
-                with open(save_path, 'wb') as out_file:
-                    out_file.write(response.read())
+            # check pdfid.txt file is created if it is not create it and write 0.pdf to it
+            if not os.path.exists('pdfid.txt'):
+                with open('pdfid.txt', 'w') as f:
+                    f.write("0.pdf")
+                    f.close()
+
+            # read the last pdf name which is downloaded and highes number
+            with open('pdfid.txt', 'r') as f:
+                last_pdf_name = int(f.read().split('.')[0])
+                f.close()
+
+            # if current downloaded pdf is higher than the last one, download it because it is the latest
+            if int(pdf_name.split('.')[0]) > last_pdf_name:
+
+                file_name = f"{link_splitted[4]}-{link_splitted[5]}-{pdf_name}"
+                save_path = os.path.join(file_path, file_name)
+
+                # write the current pdf name to the file
+                with open('pdfid.txt', 'w') as f:
+                    f.write(pdf_name)
+                    f.close()
+
+                # download the pdf
+                with urllib.request.urlopen(link, context=context) as response:
+                    with open(save_path, 'wb') as out_file:
+                        out_file.write(response.read())
+
+                return True
+            
             sleep(0.1)
-        return True
+        return False
     except Exception as e:
         print(e)
+        print(traceback.format_exc())
         return False
     
 def extract_text_with_pytesseract(list_dict_final_images):
@@ -80,12 +104,12 @@ def convert_pdf_to_images(file_path, scale=300/72):
     return list_final_images
 
 if __name__ == "__main__":
-    # links = collect_links("https://basimevi.gov.ct.tr")
-    # if download_pdf(links) == True:
-        # TODO: you need to find the newly downloaded pdf file and read it in this implementation it is the one with the index 1
-        # find pdf path to convert it into images
-        pdf_file = os.path.join(file_path, os.listdir(file_path)[1])
+    #TODO: in final step make this script run in a loop and check the website every 1 hour
+    links = collect_links("https://basimevi.gov.ct.tr")
+    is_downloaded = download_pdf(links)
+    if is_downloaded:
+        pdf_file = os.path.join(file_path, os.listdir(file_path)[0])
         image_pdf_pages = convert_pdf_to_images(pdf_file)
         extracted_text = extract_text_with_pytesseract(image_pdf_pages)
         print(extracted_text)
-
+    #TODO: find a way to read extracted text as voice and save it as mp3 file
