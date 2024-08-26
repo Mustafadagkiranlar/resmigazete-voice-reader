@@ -1,6 +1,6 @@
 # Requirements
 
-- Python 3.8 - 3.12.4
+- Python 3.11.3 (A good version that supports every library)
 
 # Setup
 
@@ -13,6 +13,8 @@ source venv/bin/activate
 
 python -m pip install -r requirements.txt
 ```
+
+- You need to create `pdfid.txt` in src folder with the content of `0.pdf`.
 
 Install Tesseract on your linux machine. I found this [installation answer](https://openprompt.co/conversations/4164) after searching solution to my problem. __This bash example belove works only on linux, to find compatible solution for your system check installation answer link above__
 
