@@ -101,7 +101,6 @@ pydantic_core==2.20.1
 Pygments==2.18.0
 pynndescent==0.5.13
 pyparsing==3.1.4
-PyPDF2==3.0.1
 pypdfium2==4.30.0
 pypinyin==0.52.0
 pysbd==0.3.4

@@ -33,3 +33,10 @@ To run the application change your directory to src
 cd src/
 python scraper.py
 ```
+
+# Stuff that I used
+
+- Some basic webscraping tools and logic thats all.
+- `pypdfium2` pdf conversion. Converting pdf to image. Converting to image helps scanning for texts easier.
+- `pytesseract.image_to_string`. extracting string from images. Other libraries are having troubles when there is tables of text in a single page this is the sweet solution.
+- [AI text to speech Coqui-AI XTTS-2 hosted on my machine CUDA (GPU) helps for faster processes](https://github.com/coqui-ai/TTS?tab=readme-ov-file)
